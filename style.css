@@ -1,0 +1,96 @@
+body{
+    margin: 1rem;
+    pad : 0;
+    
+}
+
+.box{
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+}
+.col-up{
+    
+    display: flex;
+    flex-direction: row;
+    margin-left: 3px;
+   
+    
+}
+
+.col-up div{
+    width: 60px !important;
+    height: 60px!important;
+    border: 1px solid black;
+    border-bottom: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aliceblue;
+     
+  
+}
+
+.col-up .firstSquare{
+    border: none;
+}
+
+
+.name{
+    width: 60px;
+}
+.row {
+   display: flex;
+   flex-flow: row wrap; 
+}
+
+.row div{
+    object-fit: contain;
+    border: 1px solid black;
+    border-top: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0.5px solid black;
+    margin-bottom: -1px;
+    
+}
+.row div > div{
+    width: 60px;
+    height: 60px;
+}
+
+.array .name{
+    background: aquamarine;
+}
+
+.name {
+    background: orange;
+}
+
+.black{
+    background: black;
+}
+
+.ranking{
+    margin-top: 10px;
+}
+
+.ranking__row{
+    display:flex;
+    flex-flow: row;
+}
+
+.ranking__row div{
+    border: 1px solid black;
+    width: 60px!important;
+    height: 45px!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.matchModal{
+    display: flex;
+    flex-flow: row nowrap;
+}
