@@ -1,9 +1,9 @@
 let players = [
-    {id: 0, seed: 1, name: "Lenny", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
-    {id: 1, seed: 2, name: "Patrick", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
-    {id: 2, seed: 3, name: "Elsa", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
-    {id: 3, seed: 4, name: "Linus", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
-    {id: 4, seed: 5, name: "Robert", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0} ];
+    {id: 0, seed: 0, name: "Lenny", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
+    {id: 1, seed: 1, name: "Patrick", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
+    {id: 2, seed: 2, name: "Elsa", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
+    {id: 3, seed: 3, name: "Linus", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
+    {id: 4, seed: 4, name: "Robert", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0} ];
    
     
     let matches = [{}];
@@ -24,15 +24,16 @@ let players = [
   
   
  for(let i = 0; i < players.length; i++){
-    document.querySelector(".col-up").innerHTML += `<div class="name" data-id="${players[i].id}"> ${players[i].name}</div>`
-    document.querySelector(".row").innerHTML += `<div class="newRow${i} newRow" data-id="${players[i].id}"> <div class="name">${players[i].name}</div></div>`
+    document.querySelector(".col-up").innerHTML += `<div class="name" data-id="${players[i].seed}"> ${players[i].name}</div>`
+    document.querySelector(".row").innerHTML += `<div class="newRow${i} newRow" data-id="${players[i].seed}"> <div class="name">${players[i].name}</div></div>`
     for(let y = 0; y < players.length; y++){
   
         if(y===i){
             document.querySelector(`.newRow${i}`).innerHTML += `<div class="square black"></div>` 
         }else{
-            let matchToPlay = `match${players[i].id}${players[y].id}`
-            document.querySelector(`.newRow${i}`).innerHTML += `<div class="square ${players[i].name}${players[i].id}vs${players[y].id}${players[y].name}" data-id="${matchToPlay}"></div>`
+        
+            let matchToPlay = `match${players[i].seed}${players[y].seed}`
+            document.querySelector(`.newRow${i}`).innerHTML += `<div class="square ${players[i].name}${players[i].seed}vs${players[y].seed}${players[y].name}" data-id="${matchToPlay}"></div>`
         }
     }
    
@@ -54,11 +55,12 @@ let players = [
             for(let i = 0; i < players.length; i++){
                 for(let y = 0; y < players.length; y++){
                     
-                    let  newMatchToPlay = `match${i}${y}`;
-                  
+                    let  newMatchToPlay = `match${players[i].seed}${players[y].seed}`;
+                    
                     if(this.dataset.id === newMatchToPlay){
+                        console.log("click : " +  newMatchToPlay)
                        
-                        showModalChange(i, y);
+                        showModalChange(players[i].seed, players[y].seed);
 
                     }
                 }
@@ -68,8 +70,8 @@ let players = [
             for(let i = 0; i < players.length; i++){
                 for(let y = 0; y < players.length; y++){
 
-                    let  newMatchToPlay = `match${players[i].id}${players[y].id}`;
-
+                    let  newMatchToPlay = `match${players[i].seed}${players[y].seed}`;
+                  
                     if(this.dataset.id === newMatchToPlay){
                         
                         showModal(i,y)
@@ -136,11 +138,12 @@ let players = [
  }
   
  function showModalChange(i, y){
+    console.log("ShowModalChange " + i + " " + y);
     document.querySelector(".modal").innerHTML =
                  
     ` <div class="matchModal">
          <div>
-             <p> This games has already been played. Do you wish to change the result </p>
+             <p> This games between ${players[i].name} and ${players[y].name} has already been played. Do you wish to change the result </p>
          <button id="showModalChangeYes">Yes</button><button id="showModalChangeNo">No</button>
          <button id="showModalChangeDelete">Delete</button>
      </div>
@@ -224,12 +227,21 @@ let players = [
     
     
     document.querySelector(".matchModal button").addEventListener("click", e => {
-                                              
-        let iResult = document.getElementById(`score${players[i].id}`).value;
-        let yResult = document.getElementById(`score${players[y].id}`).value;
-       
-       
-  
+        let iResult, yResult;
+        
+        for( let z = 0; i < players.length; z++){
+            console.log(players[1].seed)
+            // if(players[z].seed === i ){
+            //     iResult = document.getElementById(`score${players[z].seed}`).value;
+            //     continue;
+            // }
+            // if(players[z].seed === y ){
+            //     iResult = document.getElementById(`score${players[z].seed}`).value;
+
+            // }
+            
+        } 
+    
         for(let x=0; x < matches.length; x++){
             if(matches[x].id === `${i}${y}`){
                 matches[x].score.team1 = iResult;
@@ -245,7 +257,7 @@ let players = [
   
         if(iResult === yResult){
   
-            document.querySelector(`.${players[i].name}${players[i].id}vs${players[y].id}${players[y].name}`).innerHTML = `<p>Draw <br>${iResult} - ${yResult}<p>`;
+            document.querySelector(`.${players[i].name}${players[i].seed}vs${players[y].seed}${players[y].name}`).innerHTML = `<p>Draw <br>${iResult} - ${yResult}<p>`;
             players[i].draw  += 1;
             players[i].pts = players[i].victory * 3 + players[i].draw;
             players[i].goal.for =+ yResult;
