@@ -71,11 +71,11 @@ let players = [
                 for(let y = 0; y < players.length; y++){
 
                     let  newMatchToPlay = `match${players[i].seed}${players[y].seed}`;
-                  
+                    
                     if(this.dataset.id === newMatchToPlay){
-                        
-                        showModal(i,y)
-                        matchScore(i,y);
+                        console.log("click : " +  newMatchToPlay)
+                        showModal(players[i].seed, players[y].seed)
+                        // matchScore(players[i].seed, players[y].seed);
                           
                     }
                 }
@@ -117,33 +117,62 @@ let players = [
  }
   
  function showModal(i, y){
+     let nameI, nameY, idI, idY;
+    for(z = 0; z < players.length; z++){
+         if(players[z].seed === i){
+            nameI = players[z].name;  
+            idI = players[z].id;
+         }
+         if(players[z].seed === y){
+            nameY = players[z].name;
+            idY = players[z].id;
+         }
+     }
+
+     console.log("showModal: \nnameI : " + nameI + "\nnamey : " + nameY +"\nidi : " + idI +"\nidY : " + idY )
     document.querySelector(".modal").innerHTML =
                  
     ` <div class="matchModal">
          <div>
-             <p>${players[i].name}
-             <input id="score${players[i].id}" type="number" value="0" min = "0"/>
+             <p>${nameI}
+             <input id="score${idI}" type="number" value="0" min = "0"/>
          </div>
          <div>
              vs
          </div>
          <div>
-             <p>${players[y].name}
-             <input id="score${players[y].id}" type="number" value="0" min = "0"/>
+             <p>${nameY}
+             <input id="score${idY}" type="number" value="0" min = "0"/>
          </div>
-         <button>ok</button>
+         <button>ok</button><button id="modalDelete">X</button>
      </div>
  `
  ;
+
+     matchScore(idI, idY);
+
+
+ document.getElementById("modalDelete").addEventListener("click", e=>{
+     closeModal();
+ })
  }
   
  function showModalChange(i, y){
-    console.log("ShowModalChange " + i + " " + y);
+    let namei, namey;
+    for(z = 0; z < players.length; z++){
+        if(players[z].seed === i){
+            namei = players[z].name;
+        }
+        if(players[z].seed === y){
+            namey = players[z].name;
+        }
+    }
+
     document.querySelector(".modal").innerHTML =
                  
     ` <div class="matchModal">
          <div>
-             <p> This games between ${players[i].name} and ${players[y].name} has already been played. Do you wish to change the result </p>
+             <p> This games between ${namei} and ${namey} has already been played. Do you wish to change the result </p>
          <button id="showModalChangeYes">Yes</button><button id="showModalChangeNo">No</button>
          <button id="showModalChangeDelete">Delete</button>
      </div>
@@ -152,7 +181,17 @@ let players = [
  }
   
  function modalChange(i, y){
-     
+    let IDi, IDy;
+    for(z = 0; z < players.length; z++){
+        console.log(z)
+        if(players[z].seed === i){
+            IDi = players[z].id;   
+        }
+        if(players[z].seed === y){
+            IDy = players[z].id;
+        }
+    }
+    
     document.getElementById("showModalChangeYes").addEventListener("click", e=>{
         removeMatchScore(i,y);
         showModal(i, y);
@@ -162,51 +201,85 @@ let players = [
         closeModal();
     })
     document.getElementById("showModalChangeDelete").addEventListener("click", e=>{
-        document.querySelector(`.${players[i].name}${players[i].id}vs${players[y].id}${players[y].name}`).innerHTML = ``;
-        document.querySelector(`.${players[y].name}${players[y].id}vs${players[i].id}${players[i].name}`).innerHTML = ``;
-        console.log(`.${players[i].name}${players[i].id}vs${players[y].id}${players[y].name} attends .${players[y].name}${players[y].id}vs${players[i].id}${players[i].name}`);
-        
-        let compareId =  `${i}${y}`;
+        let teami,teamii, teamyy, teamy;
+     
+        for(z = 0; z < players.length; z++){
+            
+            if(players[z].seed === i){
+                
+                teami = `${players[z].name}${players[z].seed}`;
+                teamii =`${players[z].seed}${players[z].name}`;
+            }
+            if(players[z].seed === y){
+                teamy = `${players[z].name}${players[z].seed}`;
+                teamyy =`${players[z].seed}${players[z].name}`;
+            }
+            
+            
+        }
+      
+        document.querySelector(`.${teami}vs${teamyy}`).innerHTML = ``;
+        document.querySelector(`.${teamy}vs${teamii}`).innerHTML = ``;
        
-        console.log("compareID = " + compareId);
-
-        for(x=0; x < matches.length; x++){
+        for(x = 0; x < matches.length; x++){
             
             if(matches[x].id === `${i}${y}`){
                 
                 let team1 = matches[x].score.team1;
                 let team2 = matches[x].score.team2;
-                console.log("but i: " + team1 + ". y:" + team2)
-               
-                if(team1 === team2){
+                for(z = 0; z < players.length; z++){
                   
-                    players[i].draw -=1;
-                    players[i].goal.for -= team1;
-                    players[i].goal.against -= team2;
-                    players[i].pts = players[i].victory * 3 + players[i].draw;
-                    players[i].goal.difference = players[i].goal.for - players[i].goal.against;
+                    if(players[z].seed === i){
+                        teami = players[z].id ;
+                    }
+                    if(players[z].seed === y){
+                        teamy = players[z].id;
+                    }
+                }
+
+                if(team1 === team2){
                     
-                    players[y].draw -=1;
-                    players[y].goal.for -= team2;
-                    players[y].goal.against -= team1;
-                    players[y].pts = players[y].victory * 3 + players[y].draw;
-                    players[y].goal.difference = players[y].goal.for - players[y].goal.against;
+                    players[IDi].draw -=1;
+                    players[IDi].goal.for -= team1;
+                    players[IDi].goal.against -= team2;
+                    players[IDi].pts = players[IDi].victory * 3 + players[IDi].draw;
+                    players[IDi].goal.difference = players[IDi].goal.for - players[IDi].goal.against;
+                    
+                    players[IDy].draw -=1;
+                    players[IDy].goal.for -= team2;
+                    players[IDy].goal.against -= team1;
+                    players[IDy].pts = players[IDy].victory * 3 + players[IDy].draw;
+                    players[IDy].goal.difference = players[IDy].goal.for - players[IDy].goal.against;
                     
                     
                 }else if(team1 > team2){
                    
-                    console.log("team1 win")
-                    players[i].victory -=1;
-                    players[i].goal.for -= team1;
-                    players[i].goal.against -= team2;
-                    players[i].pts = players[i].victory * 3 + players[i].draw;
-                    players[i].goal.difference = players[i].goal.for - players[i].goal.against;
+                    players[teami].victory -=1;
+                    players[teami].goal.for -= team1;
+                    players[teami].goal.against -= team2;
+                    players[teami].pts = players[i].victory * 3 + players[i].draw;
+                    players[teami].goal.difference = players[i].goal.for - players[i].goal.against;
                     
-                    players[y].loose -=1;
-                    players[y].goal.for -= team2;
-                    players[y].goal.against -= team1;
-                    players[y].pts = players[y].victory * 3 + players[y].draw;
-                    players[y].goal.difference = players[y].goal.for - players[y].goal.against;
+                    players[teamy].loose -=1;
+                    players[teamy].goal.for -= team2;
+                    players[teamy].goal.against -= team1;
+                    players[teamy].pts = players[y].victory * 3 + players[y].draw;
+                    players[teamy].goal.difference = players[y].goal.for - players[y].goal.against;
+
+                }else{
+
+                    players[teami].loose -=1;
+                    players[teami].goal.for -= team1;
+                    players[teami].goal.against -= team2;
+                    players[teami].pts = players[i].victory * 3 + players[i].draw;
+                    players[teami].goal.difference = players[i].goal.for - players[i].goal.against;
+                    
+                    players[teamy].victory -=1;
+                    players[teamy].goal.for -= team2;
+                    players[teamy].goal.against -= team1;
+                    players[teamy].pts = players[y].victory * 3 + players[y].draw;
+                    players[teamy].goal.difference = players[y].goal.for - players[y].goal.against;
+
                 }
                 table();
                
@@ -225,91 +298,122 @@ let players = [
   
  function matchScore(i,y){
     
-    
+    console.log("matchScore : " + i + " " + y);
     document.querySelector(".matchModal button").addEventListener("click", e => {
         let iResult, yResult;
         
-        for( let z = 0; i < players.length; z++){
-            console.log(players[1].seed)
-            // if(players[z].seed === i ){
-            //     iResult = document.getElementById(`score${players[z].seed}`).value;
-            //     continue;
-            // }
-            // if(players[z].seed === y ){
-            //     iResult = document.getElementById(`score${players[z].seed}`).value;
+  
+                iResult = document.getElementById(`score${players[i].id}`).value;
+                yResult = document.getElementById(`score${players[y].id}`).value;
+                if(iResult === null){
+                    iResult = 0;
+                }
+                if(yResult === null){
+                    yResult = 0;
+                }
 
-            // }
+                console.log(players[i].name + " " +  iResult + "\n" + players[y].name + " " +  yResult);
+                
+
             
-        } 
-    
-        for(let x=0; x < matches.length; x++){
-            if(matches[x].id === `${i}${y}`){
-                matches[x].score.team1 = iResult;
-                matches[x].score.team2 = yResult;
-               
+            if(iResult > yResult){
+                players[i].victory += 1;
+                players[i].pts = (players[i].victory * 3) + players[i].draw;
             }
-            if(matches[x].id === `${i}${y}`){
-                matches[x].score.team1 = yResult;
-                matches[x].score.team2 = iResult;
-       
-            }
-        }
-  
-        if(iResult === yResult){
-  
-            document.querySelector(`.${players[i].name}${players[i].seed}vs${players[y].seed}${players[y].name}`).innerHTML = `<p>Draw <br>${iResult} - ${yResult}<p>`;
-            players[i].draw  += 1;
-            players[i].pts = players[i].victory * 3 + players[i].draw;
-            players[i].goal.for =+ yResult;
-            players[i].goal.against =+ iResult;
-            players[i].goal.difference = players[i].goal.for - players[i].goal.against;
         
-      
-            document.querySelector(`.${players[y].name}${players[y].id}vs${players[i].id}${players[i].name}`).innerHTML = `<p>Draw <br>${yResult} - ${iResult}</p>`;
-            players[y].draw += 1;
-            players[y].pts = players[y].victory * 3 + players[y].draw;
-            players[y].goal.for =+ yResult;
-            players[y].goal.against =+ iResult;
-            players[y].goal.difference = players[y].goal.for - players[y].goal.against;
+    
+        // for(let x=0; x < matches.length; x++){
+        //     if(matches[x].id === `${i}${y}`){
+        //         matches[x].score.team1 = iResult;
+        //         matches[x].score.team2 = yResult;
+
+               
+        //     }
+        //     if(matches[x].id === `${i}${y}`){
+        //         matches[x].score.team1 = yResult;
+        //         matches[x].score.team2 = iResult;
+       
+        //     }
+        // }
+  
+        // if(iResult === yResult){
+        //     document.querySelector(`.${players[i].name}${players[i].seed}vs${players[y].seed}${players[y].name}`).innerHTML = `<p>Draw <br>${iResult} - ${yResult}<p>`;
+        //     document.querySelector(`.${players[y].name}${players[y].id}vs${players[i].id}${players[i].name}`).innerHTML = `<p>Draw <br>${yResult} - ${iResult}</p>`;
+            
+        //     for(z = 0; z < players.length; z++){
+        //         if(players[z].seed === i ){
+                    
+        //             players[z].draw = parseInt(players[z].draw) + 1;
+        //             players[z].pts = parseInt(players[z].victory) * 3 + parseInt(players[z].draw);
+        //             players[z].goal.for = parseInt(players[z].goal.for) + parseInt(iResult);
+        //             players[z].goal.against = parseInt(players[z].goal.against) + parseInt(yResult);
+        //             players[z].goal.difference = players[i].goal.for - players[i].goal.against;
+        //         }
+        //         if(players[z].seed === y){
+
+        //             players[z].draw = parseInt(players[z].draw) + 1;
+        //             players[z].pts = parseInt(players[z].victory) * 3 + parseInt(players[z].draw);
+        //             players[z].goal.for = parseInt(players[z].goal.for) + parseInt(yResult);
+        //             players[z].goal.against = parseInt(players[z].goal.against) + parseInt(iResult);
+        //             players[z].goal.difference = players[y].goal.for - players[y].goal.against;
+                 
+        //         }
+        //     }
+            
+           
+  
+        // }else if(iResult > yResult){
+  
+        //     document.querySelector(`.${players[i].name}${players[i].seed}vs${players[y].seed}${players[y].name}`).innerHTML = `<p>${players[i].name} <br>${iResult} - ${yResult}<p>`;
+        //     document.querySelector(`.${players[y].name}${players[y].seed}vs${players[i].seed}${players[i].name}`).innerHTML = `<p>${players[i].name} <br>${yResult} - ${iResult}</p>`;
+            
+        //     for( let z = 0; z < players.length; z++){
+        //         if(players[z].seed === y ){
+        //             console.log(players[z].goal.for + " " + iResult)
+        //             players[z].loose =+ 1;
+        //             players[z].pts = parseInt(players[z].victory) * 3 + parseInt(players[z].draw);
+        //             players[z].goal.for = parseInt(players[z].goal.for) + parseInt(yResult);
+        //             players[z].goal.against = parseInt(players[z].goal.against) + parseInt(iResult);
+        //             players[z].goal.difference = players[i].goal.for - players[i].goal.against;
+                   
+        //         }
+        //         if(players[z].seed === i ){
+        //             console.log(players[z].goal.for + " " + yResult)
+        //             players[z].victory =+ 1;
+        //             players[z].pts = parseInt(players[z].victory) * 3 + parseInt(players[z].draw);
+        //             players[z].goal.for = parseInt(players[z].goal.for) + parseInt(iResult);
+        //             players[z].goal.against = parseInt(players[z].goal.against) + parseInt(yResult);
+        //             players[z].goal.difference = players[y].goal.for - players[y].goal.against;
+        //         }
+        //     }
+            
+           
+        // }else if(iResult < yResult){
+  
+        //     document.querySelector(`.${players[i].name}${players[i].seed}vs${players[y].seed}${players[y].name}`).innerHTML = `<p>${players[y].name} <br>${iResult} - ${yResult}<p>`;
+        //     document.querySelector(`.${players[y].name}${players[y].seed}vs${players[i].seed}${players[i].name}`).innerHTML = `<p>${players[y].name} <br>${yResult} - ${iResult}</p>`;
+        //     for( let z = 0; z < players.length; z++){
+        //         if(players[z].seed === i ){
+        //             console.log(players[z].goal.for + " " + iResult)
+        //             players[z].loose = parseInt(players[z].loose) + 1;
+        //             players[z].pts = parseInt(players[z].victory) * 3 + parseInt(players[z].draw);                    players[z].goal.for = parseInt(players[z].goal.for) + parseInt(iResult);
+        //             players[z].goal.against = parseInt(players[z].goal.against) + parseInt(yResult);
+        //             players[z].goal.difference = players[i].goal.for - players[i].goal.against;
+        //         }
          
-  
-        }else if(iResult > yResult){
-  
-            document.querySelector(`.${players[i].name}${players[i].id}vs${players[y].id}${players[y].name}`).innerHTML = `<p>${players[i].name} <br>${iResult} - ${yResult}<p>`;
-            document.querySelector(`.${players[y].name}${players[y].id}vs${players[i].id}${players[i].name}`).innerHTML = `<p>${players[i].name} <br>${yResult} - ${iResult}</p>`;
-            
-            players[i].victory += 1;
-            players[i].pts =  players[i].victory * 3 + players[i].draw;
-            players[i].goal.for =+ iResult;
-            players[i].goal.against =+ yResult;
-            players[i].goal.difference = players[i].goal.for - players[i].goal.against;
-            
-            players[y].loose += 1;
-            players[y].goal.for =+ yResult;
-            players[y].goal.against =+ iResult;
-            players[y].pts =  players[y].victory * 3 + players[y].draw;
-            players[y].goal.difference = players[y].goal.for - players[y].goal.against;
-           
-        }else{
-  
-            document.querySelector(`.${players[i].name}${players[i].id}vs${players[y].id}${players[y].name}`).innerHTML = `<p>${players[y].name} <br>${iResult} - ${yResult}<p>`;
-            document.querySelector(`.${players[y].name}${players[y].id}vs${players[i].id}${players[i].name}`).innerHTML = `<p>${players[y].name} <br>${yResult} - ${iResult}</p>`;
-            
-            players[i].loose += 1;
-            players[i].pts =  players[i].victory * 3 + players[i].draw;
-            players[i].goal.for =+ iResult;
-            players[i].goal.against =+ yResult;
-            players[i].goal.difference = players[i].goal.for - players[i].goal.against;
-            
-            players[y].victory += 1;
-            players[y].goal.for =+ yResult;
-            players[y].goal.against =+ iResult;
-            players[y].pts =  players[y].victory * 3 + players[y].draw;
-            players[y].goal.difference = players[y].goal.for - players[y].goal.against;
+        //         if(players[z].seed === y ){
+        //             console.log(players[z].goal.for + " " + yResult)
+        //             players[z].victory = parseInt(players[z].victory) + 1;;
+        //             players[z].pts = parseInt(players[z].victory) * 3 + parseInt(players[z].draw);
+        //             players[z].goal.for = parseInt(players[z].goal.for) + parseInt(yResult);
+        //             players[z].goal.against = parseInt(players[z].goal.against) + parseInt(iResult);
+        //             players[z].goal.difference = players[y].goal.for - players[y].goal.against;
+        //         }
+        //     }
            
            
          
-        }
+        // }
         table();
         closeModal();
         
