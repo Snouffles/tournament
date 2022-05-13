@@ -1,32 +1,95 @@
+//All variables must be declared
+"use strict";
+
 let players = [
     {seed: 0, name: "Lenny", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
     {seed: 1, name: "Patrick", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
     {seed: 2, name: "Elsa", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
     {seed: 3, name: "Linus", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0},
-    {seed: 4, name: "Robert", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0} ];
+    {seed: 4, name: "Robert", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0}
+   ];
     
-   
-    
-    let matches = [{}];
-   
-    for(i = 0; i < players.length; i++){
-        for(y = 0; y < players.length; y++){
-            if(i != y){
-                matchID = i.toString()+y.toString();
-                matches.push({id: matchID, score:{team1: "", team2: ""}})
-            }
+   const createPairs = (items) => {
+    if (items.length % 2) items.push(null);
+
+    let groups = [];
+
+    let n = items.length;
+    let infinityPoint = items[0];
+
+    let candidates = items.slice(1);
+
+
+    for (let i = 0; i <= n - 2; i++) {
+      let group = [];
+      group.push([infinityPoint, candidates[i]]);
+
+      for (let j = 1; j <= n / 2 - 1; j++) {
+        let k = i + j;
+        if (k > candidates.length - 1) {
+          k = k % candidates.length;
         }
+        let q = i - j;
+        q = q < 0 ? q + candidates.length : q;
+        let currentPair = [candidates[k], candidates[q]];
+        group.push(currentPair);
+      }
+
+      groups.push(group);
     }
 
-  
+    return groups
+  };
 
- 
+const people = ["ned", "jane", "sammi", "raj", "freddy"]
+
+console.log(createPairs(players))
+   
+    let matches = [{}];
+    let day = [];
+    // if(day.some(e=> e.r.toUpperCase() === ("q").toUpperCase())){
+    //    let id = day.findIndex(e=> e.r.toUpperCase() === ("q").toUpperCase());
+    //     day[id].r += "a";
+       
+    // }
+    // if(day.some(e=> e.r.includes("q"))){
+    //    let id = day.findIndex(e=> e.r.includes("q"));
+    //     day[id].r += "a";
+       
+    // }
+    
+  
+   //Create all the possible match + the days.
+        for(let x = 0; x < players.length; x++){   
+           day.push({"id":x, "teamPlaying" : ""})
+            for(let i = 0; i < players.length; i++){
+                for(let y = 0; y < players.length; y++){
+                    
+                    if(i != y ){
+                        if((!(matches.some(e=> e.id === (i.toString() + y.toString()))) && !(matches.some(e=> e.id === (y.toString() + i.toString())))) && !(matches.some(e=> e.id === (i.toString() + y.toString()))) && !(day[x].teamPlaying.includes(i.toString())) && !(day[x].teamPlaying.includes(y.toString()))){
+                            day[x].teamPlaying += i.toString();
+                            day[x].teamPlaying += y.toString();
+                            let matchID = i.toString()+y.toString();
+                            matches.push({id: matchID, day: x, score:{team1: "", team2: ""}})
+                            console.log(matchID)
+                            
+                        }
+                    }
+                }
+            }
+        }
+            
+        
+
+console.log(day)
+console.log(matches)
+
 
 document.getElementById("showMatch").addEventListener("click", e=>{
     let input = document.getElementById("showMatchBox");
     for(z = 0; z < matches.length; z++){
         if(matches[z].team1 === undefined){
-        input.innerHTML += `<div> ${matches[z].id}: <button>Match to Play</button></div> `
+        input.innerHTML += `<div>day ${matches[z].day} > ${matches[z].id}: <button>Match to Play</button></div> `
         }else{
         input.innerHTML += `<div> ${matches[z].id}: ${matches[z].matchID} - ${matches[z].team2}</div>`
         }
@@ -36,45 +99,34 @@ document.getElementById("showMatch").addEventListener("click", e=>{
 document.getElementById("addPlayer").addEventListener("click", e=>{
     let newPlayer = document.getElementById("playerName");
     let playerList = document.getElementById("playerList");
-    let sameName = false;
-    for(z=0; z < players.length; z++){
-        if((players[z].name).toUpperCase() === (newPlayer.value).toUpperCase()){
-         sameName = true;
-        }
-     }
-        if(players.length === 0 ){
-            if(newPlayer.value != undefined && newPlayer.value != ""){
+    document.getElementById("addPlayer--Error").innerText = "";
+    
+    if(newPlayer.value != ""){
+    //Check if name is already used.
+        if(players.filter(e=> e.name.toUpperCase() === (newPlayer.value).toUpperCase()).length >0){
+            newPlayer.style.border = "2px solid red";
+            newPlayer.placeholder = "Enter a Name";
+            newPlayer.value= "";
+            document.getElementById("addPlayer--Error").innerText = "The name you have been entered is already used. Please use another name.";
             
-                players.push({seed: (players.length-1), name: newPlayer.value, goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0});
-                playerList.innerText += `\n${players.length}: ${newPlayer.value}`;
-                
-                }else{
-                    newPlayer.style.border = "2px solid red";
-                    newPlayer.placeholder = "Enter a Name";
-            
-                }
-           
         }else{
-        
-        if(newPlayer.value != undefined && newPlayer.value != "" && sameName === false){
-        
-            players.push({seed: 0, name: newPlayer.value, goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0});
+            players.push({seed: (players.length-1), name: newPlayer.value, goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, loose: 0, victory: 0, rankingPts: 0});
             playerList.innerText += `\n${players.length}: ${newPlayer.value}`;
-            
-            }else{
-                newPlayer.style.border = "2px solid red";
-                newPlayer.value= "";
-                newPlayer.placeholder = "Enter a Name";
-        
-            }
         }
+
+    }else{
+        document.getElementById("addPlayer--Error").innerText = "Please enter a Name";
+    }
+    
+           
 })
 
 
 document.getElementById("start").addEventListener("click", e =>{
-    showMatches();
     table();
+    showMatches();
 })
+
 function showMatches(){
     if(players.length === 0){
         console.log("test")
@@ -455,28 +507,28 @@ function removeMatchScore(i,y){
     }
     //sort the table from the most point, the most goal difference, the most goal
     //Will implement later the direct confrontation. 
-    function sortTable (table){
-        
-        table.sort(function(a,b){
-            let keyA = a.pts;
-            let keyB = b.pts;
-            let drawA = a.goal.difference;
-            let drawB = b.goal.difference;
-            let mostGoalA = a.goal.for;
-            let mostGoalB = b.goal.for;
+function sortTable (table){
+    
+    table.sort(function(a,b){
+        let keyA = a.pts;
+        let keyB = b.pts;
+        let drawA = a.goal.difference;
+        let drawB = b.goal.difference;
+        let mostGoalA = a.goal.for;
+        let mostGoalB = b.goal.for;
 
-      if(keyA < keyB) return 1;
-      if(keyA > keyB) return -1;
-      if(keyA === keyB){
-          if(drawA < drawB) return 1;
-          if(drawA > drawB) return 0;
-          if(drawA === drawB){
-              if(mostGoalA < mostGoalB) return 1;
-              if(mostGoalA > mostGoalB ) return -1;
-              return 0;
-          }
-          return 0;
-      }
-      return 0;
+    if(keyA < keyB) return 1;
+    if(keyA > keyB) return -1;
+    if(keyA === keyB){
+        if(drawA < drawB) return 1;
+        if(drawA > drawB) return 0;
+        if(drawA === drawB){
+            if(mostGoalA < mostGoalB) return 1;
+            if(mostGoalA > mostGoalB ) return -1;
+            return 0;
+        }
+        return 0;
+    }
+    return 0;
   });
 }
