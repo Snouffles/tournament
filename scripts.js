@@ -4,10 +4,14 @@
 let players = [];
     players = [
     {seed: 0, name: "Lenny", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
-    {seed: 1, name: "Patrick", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
-    {seed: 2, name: "Elsa", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
-    {seed: 3, name: "Linus", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
-    {seed: 4, name: "Robert", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0}
+    {seed: 1, name: "Donovan", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 2, name: "Patrick", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 3, name: "Robert", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 4, name: "Else", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 5, name: "Anna", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 6, name: "Jessica", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 7, name: "Linus", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
+    {seed: 7, name: "Jennifer", goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0},
    ];
     
 
@@ -66,16 +70,26 @@ function addPLayer(){
             
         }else{
             players.push({seed: (players.length), name: newPlayer.value, goal:{for: 0, against:0, difference:0}, pts: 0, draw: 0, defeat: 0, victory: 0, rankingPts: 0});
-            playerList.innerText += `\n${players.length}: ${newPlayer.value}`;
+            playerList.innerHTML += `<p id="${newPlayer.value}">\n${players.length}: ${newPlayer.value} <button class="deletePlayer" data-id="${newPlayer.value}">X</button></p>`;
             //clean the input field after a player has been added
             document.getElementById("playerName").value = "";
+            //delete players from the list
+            document.querySelectorAll(".deletePlayer").forEach(btn =>{
+                btn.addEventListener("click", function(e){  
+                    players.map(e => {
+                        if(e.name === this.dataset.id){
+                            players.pop(e); 
+                            document.getElementById(this.dataset.id).innerHTML = "";
+                        }
+                    })
+                })
+            })
         }
 
     }else{
         document.getElementById("addPlayer--Error").innerText = "Please enter a Name";
     }
 }
-
 function createPairs(items){
     
     //add a null object if the array is not even.
@@ -113,12 +127,13 @@ function createPairs(items){
   };
 
 function print(){
-    document.querySelector(".dayByDay").innerHTML = ""
+    document.querySelector(".dayByDay").innerHTML = "";
+    document.querySelector(".matchOfTheDay").innerHTML = "";
     let array = createPairs(players);
    
     for(let i = 0; i < array.length; i++){
         let day = `day${i+1}`
-        document.querySelector(".dayByDay").innerHTML +=
+        document.querySelector(".matchOfTheDay").innerHTML +=
         `<div class="day" id="${day}" data-id="${day}">${day}
             <div></div>
         </div>`;
@@ -149,7 +164,7 @@ function print(){
                 }else{
                     document.querySelector(`#${day} div`).innerHTML += `<div id="Match${id1}${id2}">${player1} vs ${player2} <span></span> <button class="matchToPlay" data-id="${id1}${id2}">Play</button> </div>`
                 }
-                // document.querySelector(`#${day} div`).style.display = "none";
+                document.querySelector(`#${day} div`).style.display = "none";
             }
         }
     }
@@ -446,7 +461,8 @@ function modalChange(i, y){
     })
 
     document.getElementById("showModalChangeDelete").addEventListener("click", e=>{
-        removeMatchScore(seedI, seedY)
+        removeMatchScore(seedI, seedY);
+        matches.map(e=> e.matchID == `${seedI}${seedY}` ? matches.pop(e) : "")
         table();
         closeModal();
     })
@@ -458,10 +474,10 @@ function closeModal(){
 }
 
 function updateScore(team, iResult, yResult){
-players[team].pts = players[team].victory * 3 + players[team].draw;
-players[team].goal.for =+ iResult;
-players[team].goal.against =+ yResult;
-players[team].goal.difference = players[team].goal.for - players[team].goal.against;
+    players[team].pts = players[team].victory * 3 + players[team].draw;
+    players[team].goal.for =+ iResult;
+    players[team].goal.against =+ yResult;
+    players[team].goal.difference = players[team].goal.for - players[team].goal.against;
 }
 //delete the score of one game.
 function removeMatchScore(i,y){
@@ -482,8 +498,7 @@ function removeMatchScore(i,y){
         }
     }
     document.querySelector(`#Match${i}${y} span`).innerHTML = "";
-    // document.querySelector(`.${teami}vs${teamyy}`).innerHTML = ``;
-    // document.querySelector(`.${teamy}vs${teamii}`).innerHTML = ``;
+ 
     let team1, team2;
     for(let x = 0; x < matches.length; x++){
         console.log(matches[x].matchID + " " + i + " " + y)
@@ -522,36 +537,35 @@ function removeMatchScore(i,y){
     }
     if(team1 > team2){
         
-        players[teami].defeat = parseInt(players[teami].defeat) - 1;
-        players[teami].goal.for = parseInt(players[teami].goal.for) - team2;
-        players[teami].goal.against = parseInt(players[teami].goal.against) - team1;
+        players[teami].victory = parseInt(players[teami].victory) - 1;
+        players[teami].goal.for = parseInt(players[teami].goal.for) - team1;
+        players[teami].goal.against = parseInt(players[teami].goal.against) - team2;
         players[teami].pts = parseInt(players[teami].victory * 3 ) + parseInt(players[teami].draw);
         players[teami].goal.difference = parseInt(players[teami].goal.for) - parseInt(players[teami].goal.against);
         
-        players[teamy].victory = parseInt(players[teamy].victory) - 1;
-        players[teamy].goal.for = parseInt(players[teamy].goal.for) - team1;
-        players[teamy].goal.against = parseInt(players[teamy].goal.against) - team2;
+        players[teamy].defeat = parseInt(players[teamy].defeat) - 1;
+        players[teamy].goal.for = parseInt(players[teamy].goal.for) - team2;
+        players[teamy].goal.against = parseInt(players[teamy].goal.against) - team1;
         players[teamy].pts = parseInt(players[teamy].victory * 3 ) + parseInt(players[teamy].draw);
         players[teamy].goal.difference = parseInt(players[teamy].goal.for) - parseInt(players[teamy].goal.against);
 
     }
     if(team1 < team2){
 
-        players[teami].victory = parseInt(players[teami].victory) - 1;
-        players[teami].goal.for = parseInt(players[teami].goal.for) - team2;
-        players[teami].goal.against = parseInt(players[teami].goal.against) - team1;
+        players[teami].defeat = parseInt(players[teami].defeat) - 1;
+        players[teami].goal.for = parseInt(players[teami].goal.for) - team1;
+        players[teami].goal.against = parseInt(players[teami].goal.against) - team2;
         players[teami].pts = parseInt(players[teami].victory * 3 )+ parseInt(players[teami].draw);
         players[teami].goal.difference = parseInt(players[teami].goal.for) - parseInt(players[teami].goal.against);
         
-        players[teamy].defeat = parseInt(players[teamy].defeat) - 1;
-        players[teamy].goal.for = parseInt(players[teamy].goal.for) - team1;
-        players[teamy].goal.against = parseInt(players[teamy].goal.against) - team2;
+        players[teamy].victory = parseInt(players[teamy].victory) - 1;
+        players[teamy].goal.for = parseInt(players[teamy].goal.for) - team2;
+        players[teamy].goal.against = parseInt(players[teamy].goal.against) - team1;
         players[teamy].pts = parseInt(players[teamy].victory * 3 ) + parseInt(players[teamy].draw);
         players[teamy].goal.difference = parseInt(players[teamy].goal.for) - parseInt(players[teamy].goal.against);
     }
 
     table();
-    
  
 }
     

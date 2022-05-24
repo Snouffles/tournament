@@ -12,12 +12,10 @@ body{
     flex-direction: column;
 }
 .col-up{
-    
     display: flex;
     flex-direction: row;
     margin-left: 3px;
    
-    
 }
 
 .col-up div{
@@ -31,7 +29,6 @@ body{
     align-items: center;
     background-color: aliceblue;
      
-  
 }
 
 .col-up .firstSquare{
@@ -116,4 +113,28 @@ body{
     text-align: center;
 }
 
-
+.rounds{
+    border: 1px solid;
+    background-color: aqua;
+    height: auto;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: baseline;
+}
+.dayByDay{
+    border: 1px solid;
+    display: flex;
+    flex-flow: row wrap;
+    
+    justify-content: space-between;
+    align-items: center;
+    
+}
+.matchOfTheDay{
+    display: flex;
+    width: 100%;
+}
+.day{
+   
+    border: 1px solid red;
+}
